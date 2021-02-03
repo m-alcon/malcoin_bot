@@ -98,7 +98,7 @@ def send_dice(chat_id, reply_id=''):
     }
     if reply_id:
         response_msg['reply_to_message_id'] = reply_id
-    requests.post(URLS['decide'], json=response_msg)
+    requests.post(URLS['dice'], json=response_msg)
 
 def get_product_last(coin): #TODO: check possible coin
     content = json.loads(requests.get(URLS['product']%coin).content)
