@@ -24,7 +24,7 @@ URLS = {
     'product':     COINBASE_URL + 'products/%s/stats'
 }
 
-HELP = "/help\n    Show this message\n/decide\n    Decide for you\n/product CRYPTO-COIN\n    Shows the value of CRYPTO in COIN"
+HELP = "/help\n    Show this message\n/decide\n    Decide for you\n/product CRYPTO-COIN\n    Shows the value of CRYPTO in COIN (e.g. BTC-EUR)"
 
 app = Flask(__name__)
 # scheduler = BackgroundScheduler()
