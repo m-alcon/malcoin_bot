@@ -125,7 +125,7 @@ def main():
             if command and command[0] == 'help':
                 send_message(chat_id, HELP)
             if command and command[0] == 'decide':
-                text = "Invest if %s"%random.choice(['odd','even'])
+                text = "Invest if %s"%random.choice(['odd','even','greater than three','less than four'])
                 send_message(chat_id, text)
                 send_dice(chat_id)
             elif command and command[0] == 'product':
