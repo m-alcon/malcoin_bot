@@ -4,7 +4,7 @@ import os
 import random
 import re
 import datetime
-import json 
+import json
 from flask import Flask, request # Add your telegram token as environment variable
 # from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -17,13 +17,14 @@ BOT_URL = f'https://api.telegram.org/bot{os.environ["BOT_KEY"]}/'
 URLS = {
     'message':      BOT_URL + 'sendMessage',
     'animation':    BOT_URL + 'sendAnimation',
+    'dice':    BOT_URL + 'sendDice',
     'poll':         BOT_URL + 'sendPoll',
     'stop_poll':    BOT_URL + 'stopPoll',
     # 'resources':    'https://raw.githubusercontent.com/miquelalcon/gl-telegram-bot/master/resources/',
     'product':     COINBASE_URL + 'products/%s/stats'
 }
 
-HELP = "/help\n Show this message\n"
+HELP = "/help\n    Show this message\n/decide\n    Decide for you\n/product CRYPTO-COIN\n    Shows the value of CRYPTO in COIN"
 
 app = Flask(__name__)
 # scheduler = BackgroundScheduler()
@@ -32,6 +33,11 @@ commands = {
     'help': [[
         r'^\/help\s*\n*$',
         r'^\/help\@malcoin_bot\s*\n*$',
+        ], []
+    ],
+    'decide': [[
+        r'^\/decide\s*\n*$',
+        r'^\/decide\@malcoin_bot\s*\n*$',
         ], []
     ],
     'product': [[
@@ -86,8 +92,16 @@ def send_animation(chat_id, animation, reply_id=''):
         response_msg['reply_to_message_id'] = reply_id
     requests.post(URLS['animation'], json=response_msg)
 
+def send_dice(chat_id, reply_id=''):
+    response_msg = {
+        "chat_id": chat_id,
+    }
+    if reply_id:
+        response_msg['reply_to_message_id'] = reply_id
+    requests.post(URLS['decide'], json=response_msg)
+
 def get_product_last(coin): #TODO: check possible coin
-    content = json.loads(requests.get(URLS['crypto']%coin).content)
+    content = json.loads(requests.get(URLS['product']%coin).content)
     if 'last' in content:
         return content['last']
     else:
@@ -110,6 +124,10 @@ def main():
             command = get_command(message)
             if command and command[0] == 'help':
                 send_message(chat_id, HELP)
+            if command and command[0] == 'decide':
+                text = "Invest if %s"%random.choice(['odd','even'])
+                send_message(chat_id, text)
+                send_dice(chat_id)
             elif command and command[0] == 'product':
                 coin = command[1][0]
                 value = get_product_last(coin)
